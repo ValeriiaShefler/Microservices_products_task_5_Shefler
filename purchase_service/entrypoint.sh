@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 echo "Waiting for PostgreSQL to be ready..."
@@ -37,12 +38,12 @@ from app import db_manager
 from models import ProductDB
 from sqlalchemy.orm import sessionmaker
 
-# Подключаемся к purchase БД
+#подключаемся к purchase БД
 db_manager.connect()
 Session = sessionmaker(bind=db_manager.engine)
 session = Session()
 
-# Подключаемся к source БД
+# подключаемся к source БД
 source_conn = psycopg2.connect(
     host='postgres_source',
     port=5432,

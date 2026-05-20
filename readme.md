@@ -56,63 +56,64 @@
 
     microservices_products/  
     │  
-    ├── docker-compose.yml                 # Оркестрация всех сервисов  
+    ├── docker-compose.yml                 #оркестрация всех сервисов  
     ├── .env.example                       # Шаблон переменных окружения  
-    ├── .gitignore                         # Игнорируемые файлы  
-    ├── README.md                          # Документация  
+    ├── .gitignore                         # игнорируемые файлы  
+    ├── README.md                          # документация  
     │  
-    ├── shared/                            # Общие модули (Pydantic BaseSettings)  
+    ├── shared/                            # общие модули (Pydantic BaseSettings)  
     │   ├── __init__.py  
-    │   ├── config.py                      # Конфигурация через BaseSettings  
-    │   └── database.py                    # Базовый класс для работы с БД  
+    │   ├── config.py                      #Конфигурация через BaseSettings  
+    │   └── database.py                    #Базовый класс для работы с БД  
     │  
-    ├── admin_panel/                       # Flask Admin Panel (порт 8000)  
+    ├── admin_panel/                       #Flask Admin Panel (порт 8000)  
     │   ├── Dockerfile  
     │   ├── requirements.txt  
-    │   ├── app.py                         # Основное приложение  
-    │   ├── models.py                      # SQLAlchemy модели  
-    │   ├── services.py                    # Бизнес-логика  
+    │   ├── app.py                         # основное приложение  
+    │   ├── models.py                      #  SQLAlchemy модели  
+    │   ├── services.py                    # бизнес-логика  
     │   └── templates/  
     │       ├── base.html                  # Базовый шаблон  
-    │       ├── index.html                 # Список товаров  
-    │       └── product_form.html          # Форма создания/редактирования  
+    │       ├── index.html                 # список товаров  
+    │       └── product_form.html          # форма создания/редактирования  
     │
     ├── purchase_service/                  # FastAPI Purchase Service (порт 8001)  
     │   ├── Dockerfile  
     │   ├── requirements.txt  
-    │   ├── app.py                         # API + веб-интерфейс  
+    │   ├── entrypoint.sh                  #Скрипт инициализации (ждёт БД, создаёт таблицы, синхронизирует товары)  
+    │   ├── app.py                         #API + веб-интерфейс  
     │   ├── models.py                      # SQLAlchemy + Pydantic модели  
-    │   ├── services.py                    # Бизнес-логика  
-    │   ├── database.py                    # Подключение к БД  
+    │   ├── services.py                    # бизнес-логика  
+    │   ├── database.py                    #подключение к БД  
     │   ├── clients.py                     # HTTP клиент для Search Service  
     |   └── templates/  
-    │       ├── base.html                  # Базовый шаблон  
-    │       ├── index.html                 # Главная страница  
-    │       ├── products_list.html         # Список товаров  
-    │       ├── product_detail.html        # Детали товара  
+    │       ├── base.html                  #базовый шаблон  
+    │       ├── index.html                 # главная страница  
+    │       ├── products_list.html         # гписок товаров  
+    │       ├── product_detail.html        # детали товара  
     │       ├── search_page.html           # Страница поиска  
-    │       └── stats.html                 # Статистика продаж  
+    │       └── stats.html                 #статистика продаж  
     │  
     ├── search_service/                    # FastAPI Search Service (порт 8002)  
     │   ├── Dockerfile  
     │   ├── requirements.txt  
     │   ├── app.py                         # API + веб-интерфейс  
-    │   ├── models.py                      # Pydantic модели  
-    │   ├── elastic_client.py              # Клиент Elasticsearch  
-    │   ├── search_logic.py                # Логика поиска  
+    │   ├── models.py                      #Pydantic модели  
+    │   ├── elastic_client.py              # клиент Elasticsearch  
+    │   ├── search_logic.py                # логика поиска  
     |   └── templates/  
-    │       ├── base.html                  # Базовый шаблон  
+    │       ├── base.html                  # базовый шаблон  
     │       ├── index.html                 # Главная страница  
-    │       ├── search.html                # Поиск с результатами  
+    │       ├── search.html                #поиск с результатами  
     │       ├── suggestions.html           # Автокомплит  
-    │       └── about.html                 # О сервисе  
+    │       └── about.html                 #о сервисе  
     │  
-    └── etl_service/                       # ETL Service (синхронизация)  
+    └── etl_service/                       #ETL Service (синхронизация)  
         ├── Dockerfile  
         ├── requirements.txt  
-        ├── etl.py                         # Основной вход  
-        ├── models.py                      # SQLAlchemy модели  
-        ├── scheduler.py                   # Планировщик задач  
+        ├── etl.py                         # основной вход  
+        ├── models.py                      #SQLAlchemy модели  
+        ├── scheduler.py                   #планировщик задач  
         └── sync_service.py                # Логика синхронизации   
 
 Shared - централизованное хранение конфигурации и общих утилит, переиспользуемых всеми сервисами  
