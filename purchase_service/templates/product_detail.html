@@ -7,7 +7,7 @@
 
 <div class="product-card">
     <p><strong>📝 Описание:</strong> {{ product.description or 'Нет описания' }}</p>
-    <p class="price">💰 Цена: ${{ "%.2f"|format(product.price) }}</p>
+    <p class="price">💰 Цена: {{ "%.2f"|format(product.price) }} ₽</p>
     <p class="stock">📦 Остаток: {{ product.stock }} шт.</p>
     <p>🆔 ID: {{ product.id }}</p>
     <p>📅 Создан: {{ product.created_at[:19] if product.created_at else 'Неизвестно' }}</p>

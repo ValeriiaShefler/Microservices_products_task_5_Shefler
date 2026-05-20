@@ -66,7 +66,7 @@
         {% if product.description %}
         <div class="product-description">{{ product.description }}</div>
         {% endif %}
-        <div class="product-price">${{ "%.2f"|format(product.price) }}</div>
+        <div class="product-price">{{ "%.2f"|format(product.price) }} ₽</div>
         <div class="product-stock">📦 Остаток: {{ product.stock }} шт.</div>
         {% if product._score %}
         <div class="score">🎯 Релевантность: {{ "%.2f"|format(product._score) }}</div>

@@ -31,7 +31,7 @@
         <tr>
             <td>{{ product.id }}</td>
             <td><strong>{{ product.title }}</strong></td>
-            <td class="price">${{ "%.2f"|format(product.price) }}</td>
+            <td class="price">{{ "%.2f"|format(product.price) }} ₽</td>
             <td class="{% if product.stock < 5 %}stock-low{% else %}stock{% endif %}">{{ product.stock }} шт.</td>
             <td>
                 <a href="/products/{{ product.id }}" class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;">Подробнее</a>

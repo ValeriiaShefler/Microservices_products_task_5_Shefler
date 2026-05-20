@@ -5,14 +5,14 @@
 </div>
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
-        <tr><th>ID</th><th>Title</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+        <tr><th>ID</th><th>Название</th><th>Цена</th><th>Остаток</th><th>Действия</th></tr>
     </thead>
     <tbody>
         {% for p in products %}
         <tr style="border-bottom: 1px solid #ddd;">
             <td>{{ p.id }}</td>
             <td>{{ p.title }}</td>
-            <td>${{ "%.2f"|format(p.price) }}</td>
+            <td class="price">{{ "%.2f"|format(p.price) }} ₽</td>
             <td>{{ p.stock }}</td>
             <td><a href="/products/{{ p.id }}/edit">✏️ Редактировать</a></td>
         </tr>

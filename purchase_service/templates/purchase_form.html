@@ -14,7 +14,7 @@
 {% if product %}
 <div class="product-card">
     <h2>{{ product.title }}</h2>
-    <p class="price">💰 Цена: ${{ "%.2f"|format(product.price) }}</p>
+    <p class="price">💰 Цена: {{ "%.2f"|format(product.price) }} ₽</p>
     <p class="stock">📦 Остаток: {{ product.stock }} шт.</p>
 </div>
 

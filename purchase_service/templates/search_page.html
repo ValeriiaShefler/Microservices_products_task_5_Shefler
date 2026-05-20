@@ -32,7 +32,7 @@
                     <td>{{ product.id }}</td>
                     <td><strong>{{ product.title }}</strong></td>
                     <td>{{ product.description[:50] if product.description else '-' }}{% if product.description and product.description|length > 50 %}...{% endif %}</td>
-                    <td class="price">${{ "%.2f"|format(product.price) }}</td>
+                    <td class="price">{{ "%.2f"|format(product.price) }} ₽</td>
                     <td>{{ product.stock }} шт.</td>
                     <td>
                         <a href="/products/{{ product.id }}" class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;">Подробнее</a>
