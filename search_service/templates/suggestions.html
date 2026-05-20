@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Поисковые подсказки{% endblock %}
+
+{% block content %}
+<h1>💡 Поисковые подсказки</h1>
+<p>Введите первые буквы названия товара, чтобы получить подсказки.</p>
+
+<div style="max-width: 500px; margin: 30px 0;">
+    <form method="get" action="/suggest">
+        <input type="text" name="q" class="search-box" value="{{ query }}" placeholder="Например: ноут, теле, науш..." autofocus>
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Показать подсказки</button>
+    </form>
+</div>
+
+{% if query and suggestions %}
+    <h3>Подсказки для "{{ query }}":</h3>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+        {% for sug in suggestions %}
+            <div onclick="window.location.href='/search?q={{ sug }}'" style="background: #edf2f7; padding: 10px 20px; border-radius: 25px; cursor: pointer; transition: all 0.2s;">
+                {{ sug }}
+            </div>
+        {% endfor %}
+    </div>
+{% elif query and suggestions|length == 0 %}
+    <p>Подсказки не найдены для запроса "{{ query }}"</p>
+{% endif %}
+
+<a href="/search" class="btn" style="margin-top: 30px; display: inline-block;">← Перейти к поиску</a>
+{% endblock %}

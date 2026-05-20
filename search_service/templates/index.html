@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Поиск товаров{% endblock %}
+
+{% block content %}
+<h1 style="text-align: center; margin-bottom: 20px;">🔍 Поиск товаров</h1>
+<p style="text-align: center; color: #718096; margin-bottom: 40px;">Полнотекстовый поиск с поддержкой русского языка и исправлением опечаток</p>
+
+<div style="max-width: 600px; margin: 0 auto;">
+    <form action="/search" method="get">
+        <input type="text" name="q" class="search-box" placeholder="Введите название или описание товара..." autocomplete="off" autofocus>
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="submit" class="btn btn-primary" style="padding: 12px 40px; font-size: 16px;">🔍 Найти</button>
+        </div>
+    </form>
+</div>
+
+<div style="margin-top: 60px; text-align: center;">
+    <h3>🎯 Примеры запросов:</h3>
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 20px;">
+        <button onclick="searchWithQuery('ноутбук')" class="btn" style="background: #edf2f7;">ноутбук</button>
+        <button onclick="searchWithQuery('телефон')" class="btn" style="background: #edf2f7;">телефон</button>
+        <button onclick="searchWithQuery('наушники')" class="btn" style="background: #edf2f7;">наушники</button>
+        <button onclick="searchWithQuery('клавиатура')" class="btn" style="background: #edf2f7;">клавиатура</button>
+    </div>
+</div>
+{% endblock %}

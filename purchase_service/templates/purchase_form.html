@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Покупка: {{ product.title }}{% endblock %}
+
+{% block content %}
+<h1>🛒 Оформление покупки</h1>
+
+{% if error %}
+<div class="alert-error">
+    <strong>❌ Ошибка:</strong> {{ error }}
+</div>
+{% endif %}
+
+{% if product %}
+<div class="product-card">
+    <h2>{{ product.title }}</h2>
+    <p class="price">💰 Цена: ${{ "%.2f"|format(product.price) }}</p>
+    <p class="stock">📦 Остаток: {{ product.stock }} шт.</p>
+</div>
+
+<form method="POST">
+    <div style="margin-bottom: 15px;">
+        <label>Количество:</label><br>
+        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" required style="width: 100px; padding: 8px;">
+        <small>Доступно: {{ product.stock }} шт.</small>
+    </div>
+    <button type="submit" class="btn btn-success">✅ Подтвердить покупку</button>
+    <a href="/products/{{ product.id }}" class="btn">Отмена</a>
+</form>
+{% endif %}
+{% endblock %}

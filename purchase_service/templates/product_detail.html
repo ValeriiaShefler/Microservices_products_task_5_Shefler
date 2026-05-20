@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ product.title }}</h1>
+
+<div class="product-card">
+    <p><strong>📝 Описание:</strong> {{ product.description or 'Нет описания' }}</p>
+    <p class="price">💰 Цена: ${{ "%.2f"|format(product.price) }}</p>
+    <p class="stock">📦 Остаток: {{ product.stock }} шт.</p>
+    <p>🆔 ID: {{ product.id }}</p>
+    <p>📅 Создан: {{ product.created_at[:19] if product.created_at else 'Неизвестно' }}</p>
+    <p>✏️ Обновлен: {{ product.updated_at[:19] if product.updated_at else 'Неизвестно' }}</p>
+</div>
+
+<a href="/purchase/{{ product.id }}" class="btn btn-success">🛒 Купить этот товар</a>
+<a href="/products" class="btn btn-primary">← Назад к списку</a>
+{% endblock %}

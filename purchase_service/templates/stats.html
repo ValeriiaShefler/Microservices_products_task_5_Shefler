@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика продаж{% endblock %}
+
+{% block content %}
+<h1>📊 Статистика продаж</h1>
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px;">
+    <div style="background: #3498db; color: white; padding: 20px; border-radius: 10px; flex: 1; text-align: center;">
+        <h2>{{ stats.total_purchases }}</h2>
+        <p>Всего продаж</p>
+    </div>
+    <div style="background: #27ae60; color: white; padding: 20px; border-radius: 10px; flex: 1; text-align: center;">
+        <h2>${{ "%.2f"|format(stats.total_revenue) }}</h2>
+        <p>Общая выручка</p>
+    </div>
+    <div style="background: #e67e22; color: white; padding: 20px; border-radius: 10px; flex: 1; text-align: center;">
+        <h2>{{ stats.total_items_sold }}</h2>
+        <p>Продано товаров</p>
+    </div>
+</div>
+
+<h2>🏆 Топ-10 популярных товаров</h2>
+{% if stats.popular_products %}
+    <table>
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Продано штук</th>
+                <th>Количество покупок</th>
+                <th>Остаток на складе</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in stats.popular_products %}
+            <tr>
+                <td><strong>{{ p.product_title }}</strong></td>
+                <td>{{ p.total_purchased }} шт.</td>
+                <td>{{ p.purchase_count }} раз</td>
+                <td class="{% if p.current_stock < 5 %}stock-low{% else %}stock{% endif %}">{{ p.current_stock }} шт.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Пока нет продаж</p>
+{% endif %}
+
+<a href="/products" class="btn btn-primary">← Назад к товарам</a>
+{% endblock %}

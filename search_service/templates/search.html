@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Поиск: {{ query }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-header { background: #f7fafc; border-radius: 12px; padding: 20px; margin-bottom: 30px; }
+    .result-count { color: #718096; margin-bottom: 20px; }
+    .product-card { background: white; border: 1px solid #e2e8f0; }
+    .suggestions-box { background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 10px; padding: 15px; margin-bottom: 20px; }
+    .suggestions-title { font-weight: bold; margin-bottom: 10px; color: #2c5282; }
+    .suggestions-list { display: flex; gap: 10px; flex-wrap: wrap; }
+    .suggestion-tag { background: white; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s; border: 1px solid #bee3f8; }
+    .suggestion-tag:hover { background: #bee3f8; transform: scale(1.05); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-header">
+    <form action="/search" method="get">
+        <input type="text" name="q" class="search-box" value="{{ query }}" placeholder="Введите запрос..." autocomplete="off">
+        <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: space-between;">
+            <div>
+                <label>Результатов на странице:</label>
+                <select name="limit" onchange="this.form.submit()" style="padding: 5px; margin-left: 10px;">
+                    <option value="10" {% if limit == 10 %}selected{% endif %}>10</option>
+                    <option value="20" {% if limit == 20 %}selected{% endif %}>20</option>
+                    <option value="50" {% if limit == 50 %}selected{% endif %}>50</option>
+                </select>
+                <input type="hidden" name="offset" value="0">
+            </div>
+            <button type="submit" class="btn btn-primary">🔍 Найти</button>
+        </div>
+    </form>
+</div>
+
+{% if suggestions and suggestions|length > 0 %}
+<div class="suggestions-box">
+    <div class="suggestions-title">💡 Возможно, вы искали:</div>
+    <div class="suggestions-list">
+        {% for sug in suggestions %}
+        <span class="suggestion-tag" onclick="window.location.href='/search?q={{ sug }}'">{{ sug }}</span>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if error %}
+<div class="alert-error">
+    <strong>⚠️ Ошибка:</strong> {{ error }}
+</div>
+{% endif %}
+
+<div class="result-count">
+    {% if total > 0 %}
+        Найдено <strong>{{ total }}</strong> товаров по запросу "{{ query }}"
+    {% elif query %}
+        По запросу "{{ query }}" ничего не найдено
+    {% endif %}
+</div>
+
+{% if products %}
+    {% for product in products %}
+    <div class="product-card">
+        <div class="product-title">{{ product.title }}</div>
+        {% if product.description %}
+        <div class="product-description">{{ product.description }}</div>
+        {% endif %}
+        <div class="product-price">${{ "%.2f"|format(product.price) }}</div>
+        <div class="product-stock">📦 Остаток: {{ product.stock }} шт.</div>
+        {% if product._score %}
+        <div class="score">🎯 Релевантность: {{ "%.2f"|format(product._score) }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    <div class="pagination">
+        {% if offset > 0 %}
+            <a href="/search?q={{ query }}&limit={{ limit }}&offset={{ offset - limit }}" class="btn">◀ Предыдущая</a>
+        {% endif %}
+        {% if products|length == limit %}
+            <a href="/search?q={{ query }}&limit={{ limit }}&offset={{ offset + limit }}" class="btn btn-primary">Следующая ▶</a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const searchInput = document.querySelector('input[name="q"]');
+    if (searchInput) {
+        let suggestionsBox = null;
+        let debounceTimer;
+        
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const query = this.value.trim();
+            
+            if (suggestionsBox) {
+                suggestionsBox.remove();
+                suggestionsBox = null;
+            }
+            
+            if (query.length < 2) return;
+            
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/api/search/suggest?q=${encodeURIComponent(query)}&limit=5`);
+                    const data = await response.json();
+                    
+                    if (data.suggestions && data.suggestions.length > 0) {
+                        suggestionsBox = document.createElement('div');
+                        suggestionsBox.className = 'suggestions-box';
+                        suggestionsBox.innerHTML = `
+                            <div class="suggestions-title">💡 Подсказки:</div>
+                            <div class="suggestions-list">
+                                ${data.suggestions.map(s => `<span class="suggestion-tag" onclick="searchWithQuery('${s.replace(/'/g, "\\'")}')">${s}</span>`).join('')}
+                            </div>
+                        `;
+                        searchInput.parentNode.insertBefore(suggestionsBox, searchInput.nextSibling);
+                    }
+                } catch(e) {
+                    console.error('Suggest error:', e);
+                }
+            }, 300);
+        });
+    }
+    
+    function searchWithQuery(query) {
+        window.location.href = `/search?q=${encodeURIComponent(query)}`;
+    }
+
+</script>
+{% endblock %}
