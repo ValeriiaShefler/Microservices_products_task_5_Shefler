@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Результат покупки{% endblock %}
+
+{% block content %}
+{% if success %}
+<div class="alert-success">
+    <h2>✅ Покупка успешно оформлена!</h2>
+    <p>Вы купили <strong>{{ quantity }} шт.</strong> товара <strong>{{ product_title }}</strong></p>
+    <p>Сумма к оплате: <strong>${{ "%.2f"|format(total_amount) }}</strong></p>
+    <p>Остаток на складе: <strong>{{ remaining_stock }} шт.</strong></p>
+    <p>Дата покупки: {{ purchase_date }}</p>
+</div>
+{% else %}
+<div class="alert-error">
+    <h2>❌ Ошибка!</h2>
+    <p>{{ error }}</p>
+</div>
+{% endif %}
+
+<a href="/products" class="btn btn-primary">← Вернуться к списку</a>
+{% endblock %}

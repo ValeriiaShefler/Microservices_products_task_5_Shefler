@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}О сервисе поиска{% endblock %}
+
+{% block content %}
+<h1>ℹ️ О сервисе поиска</h1>
+
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-number">✅</div>
+        <div class="stat-label">Полнотекстовый поиск</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">🌐</div>
+        <div class="stat-label">Поддержка русского языка</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">🔧</div>
+        <div class="stat-label">Исправление опечаток</div>
+    </div>
+</div>
+
+<div style="background: #f7fafc; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+    <h3>⚙️ Технические характеристики</h3>
+    <ul style="margin-top: 15px; line-height: 1.8;">
+        <li><strong>Поисковый движок:</strong> Elasticsearch {{ "8.11.0" }}</li>
+        <li><strong>Анализатор:</strong> Russian Analyzer (морфология)</li>
+        <li><strong>Fuzzy search:</strong> Автоматическое исправление опечаток</li>
+        <li><strong>Вес полей:</strong> Название (3x), Описание (1x)</li>
+        <li><strong>Сортировка:</strong> По релевантности (score), затем по ID</li>
+    </ul>
+</div>
+
+<div style="background: #f7fafc; border-radius: 12px; padding: 20px;">
+    <h3>🔍 Примеры запросов</h3>
+    <ul style="margin-top: 15px; line-height: 1.8;">
+        <li><code>ноутбук</code> - поиск ноутбуков</li>
+        <li><code>ноутбук apple</code> - поиск ноутбуков Apple</li>
+        <li><code>ифон</code> - поиск с опечаткой</li>
+        <li><code>наушники с шумоподавлением</code> - поиск по описанию</li>
+    </ul>
+</div>
+
+{% if elasticsearch_connected %}
+    <div class="alert-info" style="margin-top: 20px;">
+        ✅ Elasticsearch подключен и работает
+    </div>
+{% else %}
+    <div class="alert-error" style="margin-top: 20px;">
+        ❌ Elasticsearch не подключен
+    </div>
+{% endif %}
+
+<a href="/" class="btn btn-primary" style="margin-top: 20px;">← На главную</a>
+{% endblock %}

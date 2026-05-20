@@ -1,0 +1,135 @@
+services:
+  postgres_source:
+    image: postgres:15
+    container_name: postgres_source
+    environment:
+      POSTGRES_DB: products_source
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_source_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d products_source"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - microservices_network
+
+  postgres_purchase:
+    image: postgres:15
+    container_name: postgres_purchase
+    environment:
+      POSTGRES_DB: products_purchase
+      POSTGRES_USER: purchase_user
+      POSTGRES_PASSWORD: purchase123
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_purchase_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U purchase_user -d products_purchase"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - microservices_network
+
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - microservices_network
+
+  admin_panel:
+    build: ./admin_panel
+    volumes:
+      - ./shared:/app/shared
+    container_name: admin_panel
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://admin:admin123@postgres_source:5432/products_source
+    depends_on:
+      postgres_source:
+        condition: service_healthy
+    networks:
+      - microservices_network
+
+  purchase_api:
+    build: ./purchase_service
+    volumes:
+      - ./shared:/app/shared
+    container_name: purchase_api
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=postgresql://purchase_user:purchase123@postgres_purchase:5432/products_purchase
+      - SEARCH_SERVICE_URL=http://search_api:8002
+    depends_on:
+      postgres_purchase:
+        condition: service_healthy
+      search_api:
+        condition: service_started
+    networks:
+      - microservices_network
+
+  search_api:
+    build: ./search_service
+    volumes:
+      - ./shared:/app/shared
+    container_name: search_api
+    ports:
+      - "8002:8002"
+    environment:
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - microservices_network
+
+  etl:
+    build: ./etl_service
+    volumes:
+      - ./shared:/app/shared
+    container_name: etl
+    environment:
+      - DATABASE_URL=postgresql://admin:admin123@postgres_source:5432/products_source
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+      - ETL_INTERVAL_SECONDS=5
+      - PYTHONPATH=/app
+    depends_on:
+      postgres_source:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - microservices_network
+
+networks:
+  microservices_network:
+    driver: bridge
+
+volumes:
+  postgres_source_data:
+  postgres_purchase_data:
+  elasticsearch_data:

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Список товаров{% endblock %}
+
+{% block content %}
+<h1>📋 Все товары</h1>
+
+<div style="margin-bottom: 20px;">
+    <form action="/products" method="get" style="display: inline;">
+        Показывать: 
+        <select name="limit" onchange="this.form.submit()">
+            <option value="10" {% if limit == 10 %}selected{% endif %}>10</option>
+            <option value="20" {% if limit == 20 %}selected{% endif %}>20</option>
+            <option value="50" {% if limit == 50 %}selected{% endif %}>50</option>
+        </select>
+    </form>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Цена</th>
+            <th>Остаток</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.id }}</td>
+            <td><strong>{{ product.title }}</strong></td>
+            <td class="price">{{ "%.2f"|format(product.price) }} ₽</td>
+            <td class="{% if product.stock < 5 %}stock-low{% else %}stock{% endif %}">{{ product.stock }} шт.</td>
+            <td>
+                <a href="/products/{{ product.id }}" class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;">Подробнее</a>
+                <a href="/purchase/{{ product.id }}" class="btn btn-success" style="padding: 4px 8px; font-size: 12px;">Купить</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 20px;">
+    {% if skip > 0 %}
+        <a href="?skip={{ skip - limit }}&limit={{ limit }}" class="btn">◀ Предыдущая</a>
+    {% endif %}
+    {% if products|length == limit %}
+        <a href="?skip={{ skip + limit }}&limit={{ limit }}" class="btn">Следующая ▶</a>
+    {% endif %}
+</div>
+{% endblock %}
